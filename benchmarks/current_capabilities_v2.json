@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "suite_version": 2,
+  "name": "Current BRAMS meteor and geography capability evaluation v2",
+  "note": "Provisional reviewable suite. Capture fresh real evidence and independently review results before model comparison; no automated metric alone establishes scientific accuracy.",
+  "cases": [
+    {
+      "id": "CUR01",
+      "tier": "current",
+      "category": "general_knowledge",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "Briefly explain what a radio meteor echo is.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "forbidden_tools": [
+            "detect_meteors"
+          ],
+          "review_rubric": [
+            "Explain the concept; do not claim an archive observation or run a detection."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUR02",
+      "tier": "current",
+      "category": "meteor_detection",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "Detect meteor echoes for BEHUMA_SYS001 on 2023-12-14 from 21:15 to 21:20 UTC and show the image.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "detect_meteors",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "detect_meteors",
+              "path": "total_meteor_count",
+              "label": "automated echo count"
+            }
+          ],
+          "require_source": false,
+          "expected_media": [
+            "detection"
+          ],
+          "review_rubric": [
+            "Use the requested recording, include the detected image and automated count, and do not claim certainty."
+          ]
+        },
+        {
+          "prompt": "List each detected echo time and confidence.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "detect_meteors",
+              "path": "total_meteor_count",
+              "label": "automated echo count"
+            }
+          ],
+          "require_source": false,
+          "review_rubric": [
+            "Use the previous verified detection; report estimated times and confidence without an unnecessary repeat."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUR03",
+      "tier": "current",
+      "category": "geographic_count",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "How many BRAMS station sites are in the southern part of Belgium?",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "query_geographic_receivers",
+              "arguments": {
+                "country": "Belgium",
+                "direction": "south",
+                "action": "count"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "query_geographic_receivers",
+              "path": "site_count",
+              "label": "site count"
+            }
+          ],
+          "require_source": false,
+          "review_rubric": [
+            "Distinguish sites from antennas; explain the geographic-half boundary and uncertainty."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUR04",
+      "tier": "current",
+      "category": "availability",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "Check recording availability for BEHUMA_SYS001 on 2023-12-14 from 21:00 to 22:00 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T22:00:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Report observed coverage; distinguish missing availability from an explicit zero and do not claim live uptime."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUR05",
+      "tier": "current",
+      "category": "spectrogram",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "Show the archived spectrogram for BEHUMA_SYS001 on 2023-12-14 from 21:15 to 21:20 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_spectrogram",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "expected_media": [
+            "image"
+          ],
+          "review_rubric": [
+            "Show the actual recording, give its station and UTC window, and do not claim to interpret the pixels."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUR06",
+      "tier": "current",
+      "category": "geographic_activity",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "How many station sites in eastern Belgium had recordings on 2023-12-14 from 21:00 to 21:05 UTC?",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "query_geographic_receivers",
+              "arguments": {
+                "country": "Belgium",
+                "direction": "east",
+                "action": "active_count",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T21:05:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Report site count, geographic boundary, and unknown-activity sites; do not treat catalog membership as activity."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUR07",
+      "tier": "current",
+      "category": "geographic_spectrogram",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "Show a spectrogram from a station in northern Belgium on 2023-12-14 from 21:00 to 21:05 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "query_geographic_receivers",
+              "arguments": {
+                "country": "Belgium",
+                "direction": "north",
+                "action": "spectrogram",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T21:05:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Show a verified image and its station, time, and geographic selection definition."
+          ],
+          "expected_media": [
+            "image"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUR08",
+      "tier": "current",
+      "category": "multi_slot_detection",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "Check BEHUMA_SYS001 for meteor echoes on 2023-12-14 from 21:00 to 22:00 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "detect_meteors",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T22:00:00Z",
+                "max_slots": 12
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Assess the full requested hour and disclose any missing, failed, or uninspected slots."
+          ],
+          "expected_media": [
+            "detection"
+          ]
+        }
+      ]
+    }
+  ]
+}

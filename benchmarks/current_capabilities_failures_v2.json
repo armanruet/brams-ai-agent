@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "suite_version": 2,
+  "name": "Current BRAMS controlled uncertainty and failures v2",
+  "note": "Synthetic service failure, not live archive evidence. Run separately in live mode.",
+  "cases": [
+    {
+      "id": "CURF01",
+      "tier": "current",
+      "category": "failure_handling",
+      "capability_status": "supported",
+      "turns": [
+        {
+          "prompt": "Show the spectrogram for BEHUMA_SYS001 on 2023-12-14 from 21:15 to 21:20 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_spectrogram",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "expected_statuses": [
+                "error"
+              ]
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "expected_media": [],
+          "review_rubric": [
+            "Acknowledge the archive failure and unknown availability; do not claim zero recordings or show a fabricated image."
+          ]
+        }
+      ],
+      "controlled_fixture": "archive_error",
+      "fixture_catalog_seed": {
+        "receiver_id": "BEHUMA_SYS001",
+        "name": "Humain 1",
+        "location_code": "BEHUMA",
+        "antenna": 1,
+        "catalog_start": "2015-04-23 09:45:00",
+        "catalog_end": "2026-11-01 11:00:00",
+        "coordinates": {
+          "longitude_degrees": 5.254884,
+          "latitude_degrees": 50.192434,
+          "altitude_m": 294.0,
+          "provenance": "location_registry",
+          "note": "Site coordinates; WAV antenna coordinates can differ. SDK converts registry altitude from km to m."
+        },
+        "coordinates_source_url": "https://brams.aeronomie.be/v4/location.php?location_code=BEHUMA",
+        "benchmark_seed_provenance": {
+          "run": ".benchmarks/reference-v2.json",
+          "retrieved_at_utc": "2026-11-01T20:51:25.563199+00:00",
+          "note": "Captured registry row retained in a synthetic catalog subset; no country polygon check."
+        }
+      }
+    },
+    {
+      "id": "CURF02",
+      "tier": "current",
+      "category": "controlled_availability",
+      "capability_status": "supported",
+      "controlled_fixture": "availability_missing",
+      "fixture_catalog_seed": {
+        "receiver_id": "BEHALL_SYS001",
+        "name": "Halle-Zoersel",
+        "location_code": "BEHALL",
+        "antenna": 1,
+        "catalog_start": "2022-08-28 08:00:00",
+        "catalog_end": "2026-11-07 19:00:00",
+        "coordinates": {
+          "longitude_degrees": 4.623141,
+          "latitude_degrees": 51.247878,
+          "altitude_m": 13.0,
+          "provenance": "location_registry",
+          "note": "Site coordinates; WAV antenna coordinates can differ. SDK converts registry altitude from km to m."
+        },
+        "coordinates_source_url": "https://brams.aeronomie.be/v4/location.php?location_code=BEHALL",
+        "benchmark_seed_provenance": {
+          "run": ".benchmarks/20261107-225011-318656",
+          "retrieved_at_utc": "2026-11-07T21:52:16.651161Z",
+          "note": "Actual registry row retained in a synthetic catalog subset; no country polygon check."
+        }
+      },
+      "turns": [
+        {
+          "prompt": "Check BEHALL_SYS001 availability on 2023-12-14 from 21:00 to 22:00 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "BEHALL_SYS001",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T22:00:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explicitly state missing hourly coverage is unknown, not zero."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CURF03",
+      "tier": "current",
+      "category": "controlled_availability",
+      "capability_status": "supported",
+      "controlled_fixture": "availability_zero",
+      "fixture_catalog_seed": {
+        "receiver_id": "BEHALL_SYS001",
+        "name": "Halle-Zoersel",
+        "location_code": "BEHALL",
+        "antenna": 1,
+        "catalog_start": "2022-08-28 08:00:00",
+        "catalog_end": "2026-11-07 19:00:00",
+        "coordinates": {
+          "longitude_degrees": 4.623141,
+          "latitude_degrees": 51.247878,
+          "altitude_m": 13.0,
+          "provenance": "location_registry",
+          "note": "Site coordinates; WAV antenna coordinates can differ. SDK converts registry altitude from km to m."
+        },
+        "coordinates_source_url": "https://brams.aeronomie.be/v4/location.php?location_code=BEHALL",
+        "benchmark_seed_provenance": {
+          "run": ".benchmarks/20261107-225011-318656",
+          "retrieved_at_utc": "2026-11-07T21:52:16.651161Z",
+          "note": "Actual registry row retained in a synthetic catalog subset; no country polygon check."
+        }
+      },
+      "turns": [
+        {
+          "prompt": "Check BEHALL_SYS001 availability on 2023-12-14 from 21:00 to 22:00 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "BEHALL_SYS001",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T22:00:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Report explicit zero as no coverage."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CURF04",
+      "tier": "current",
+      "category": "controlled_availability",
+      "capability_status": "supported",
+      "controlled_fixture": "availability_mixed",
+      "fixture_catalog_seed": {
+        "receiver_id": "BEHALL_SYS001",
+        "name": "Halle-Zoersel",
+        "location_code": "BEHALL",
+        "antenna": 1,
+        "catalog_start": "2022-08-28 08:00:00",
+        "catalog_end": "2026-11-07 19:00:00",
+        "coordinates": {
+          "longitude_degrees": 4.623141,
+          "latitude_degrees": 51.247878,
+          "altitude_m": 13.0,
+          "provenance": "location_registry",
+          "note": "Site coordinates; WAV antenna coordinates can differ. SDK converts registry altitude from km to m."
+        },
+        "coordinates_source_url": "https://brams.aeronomie.be/v4/location.php?location_code=BEHALL",
+        "benchmark_seed_provenance": {
+          "run": ".benchmarks/20261107-225011-318656",
+          "retrieved_at_utc": "2026-11-07T21:52:16.651161Z",
+          "note": "Actual registry row retained in a synthetic catalog subset; no country polygon check."
+        }
+      },
+      "turns": [
+        {
+          "prompt": "Check BEHALL_SYS001 availability on 2023-12-14 from 21:00 to 23:00 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "BEHALL_SYS001",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T23:00:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Report known recording evidence and unknown whole-interval coverage; do not invent a percentage."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CURF05",
+      "tier": "current",
+      "category": "controlled_detection",
+      "capability_status": "supported",
+      "controlled_fixture": "detection_partial",
+      "fixture_catalog_seed": {
+        "receiver_id": "BEHALL_SYS001",
+        "name": "Halle-Zoersel",
+        "location_code": "BEHALL",
+        "antenna": 1,
+        "catalog_start": "2022-08-28 08:00:00",
+        "catalog_end": "2026-11-07 19:00:00",
+        "coordinates": {
+          "longitude_degrees": 4.623141,
+          "latitude_degrees": 51.247878,
+          "altitude_m": 13.0,
+          "provenance": "location_registry",
+          "note": "Site coordinates; WAV antenna coordinates can differ. SDK converts registry altitude from km to m."
+        },
+        "coordinates_source_url": "https://brams.aeronomie.be/v4/location.php?location_code=BEHALL",
+        "benchmark_seed_provenance": {
+          "run": ".benchmarks/20261107-225011-318656",
+          "retrieved_at_utc": "2026-11-07T21:52:16.651161Z",
+          "note": "Actual registry row retained in a synthetic catalog subset; no country polygon check."
+        }
+      },
+      "turns": [
+        {
+          "prompt": "Detect meteors for BEHALL_SYS001 on 2023-12-14 from 21:00 to 21:10 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "detect_meteors",
+              "arguments": {
+                "search": "BEHALL_SYS001",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T21:10:00Z",
+                "max_slots": 2
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": false,
+          "expected_media": [],
+          "review_rubric": [
+            "Report candidate count only for successfully analyzed recording, disclose incomplete coverage and missing image."
+          ]
+        }
+      ]
+    }
+  ]
+}

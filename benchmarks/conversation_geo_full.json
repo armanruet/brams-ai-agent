@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "suite_version": 3,
+  "name": "Conversation and geography: full current-system evaluation",
+  "protocol": "current_system_full",
+  "note": "Ten cases / seventeen turns; three repetitions and four models produce 204 user turns. P01-P07 use current production tools with live archive queries and fixed benchmark clock. P08-P10 use explicitly labeled negative interventions; archive I/O is prohibited for those cases. No geographic selector or country polygon is supplied. Do not equate claimed country membership with a Python polygon check. Grade capability gaps separately from model errors. This is not the enhanced geographic-tool experiment.",
+  "cases": [
+    {
+      "id": "P01",
+      "tier": "full",
+      "category": "query_understanding",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Can you get me a spectrogram from any station in the north of Belgium between 10pm to 11pm yeterday?",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Recognizes yesterday despite the typo and requests one spectrogram, not WAV or PSD.",
+            "Reads the clock if resolving yesterday. With the fixed clock, unspecified time defaults to 2026-11-06 22:00-23:00 UTC, stated explicitly. Clarification is acceptable.",
+            "Clarifies the intended north boundary or explains the geographic capability limit; never invents a geographic selection or source.",
+            "Grade query understanding and safe clarification separately from completed retrieval. No geographic selection tool/polygon is supplied in this baseline."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "tier": "full",
+      "category": "clarification_and_geography",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Can you get me a spectrogram from any station in the north of Belgium between 10pm to 11pm yeterday?",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Understand the typo, relative date and spectrogram request. State the UTC default or clarify it; do not silently guess the northern boundary or a station."
+          ]
+        },
+        {
+          "prompt": "Use UTC. By north I mean inside Belgium with registry latitude at least 51.0 degrees, using the benchmark country polygon.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Retains the prior spectrogram intent and resolves yesterday to 2026-11-06 22:00-23:00 UTC.",
+            "Acknowledges that this baseline has no supplied benchmark polygon or Python geographic filter. May request suitable region/station evidence or explain the missing capability.",
+            "Registry coordinates can be retrieved, but latitude alone does not establish membership inside Belgium. Do not claim a polygon check occurred.",
+            "A clarification/limitation is not a successful PNG retrieval; record model behavior separately from the system capability gap."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "tier": "full",
+      "category": "exact_repetition",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Use the fixed clock when resolving yesterday. Do not invent the unavailable polygon/geographic tool, station eligibility, PNG or source. Distinguish a safe capability limit from task completion."
+          ]
+        },
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Recognizes an identical repeated question. Remains consistent with earlier real evidence or the earlier capability limitation, without invented progress.",
+            "Unnecessary repeated calls are an efficiency issue, separate from factual correctness. Do not require artifact reuse if no successful artifact exists."
+          ]
+        },
+        {
+          "prompt": "Show that same spectrogram again with its receiver ID and exact recording time.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "If no spectrogram was actually returned, explicitly say so rather than inventing the referenced plot, receiver or time.",
+            "If valid earlier media exists, preserve the actual receiver, recording bounds, source and artifact; record whether the UI can expose it without a fresh download.",
+            "Score unsupported-reference handling when no media exists; mark successful-artifact redisplay and reuse N/A rather than claiming it was tested."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "tier": "full",
+      "category": "paraphrased_repetition",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Read the fixed clock when resolving yesterday: 2026-11-06, 22:00-23:00 UTC.",
+            "Preserve geographic evidence provenance. No benchmark polygon or Python geographic selector is available; do not claim otherwise.",
+            "If retrieved, cite the actual image source and report the true recording bounds. A five-minute PNG is not an hour-long image. Do not download WAV/PSD for a PNG-only request."
+          ]
+        },
+        {
+          "prompt": "Could you show me that northern Belgian station's plot for yesterday at 10–11pm UTC once more?",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Recognize semantic repetition; preserve prior station, resolved date/window and actual recording. If no artifact exists, say so.",
+            "Record redundant downloads separately from answer correctness. Mark reuse/redisplay N/A if no earlier successful PNG exists."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "tier": "full",
+      "category": "explicit_refresh",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Read the fixed clock when resolving yesterday: 2026-11-06, 22:00-23:00 UTC.",
+            "Preserve geographic evidence provenance. No benchmark polygon or Python geographic selector is available; do not claim otherwise.",
+            "If retrieved, cite the actual image source and report the true recording bounds. A five-minute PNG is not an hour-long image. Do not download WAV/PSD for a PNG-only request."
+          ]
+        },
+        {
+          "prompt": "Please check the archive again now for that same receiver and UTC interval, even if we already checked.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Distinguish explicit refresh from simple repetition and make a relevant new archive call when a prior station/interval exists.",
+            "Do not claim fresh retrieval from history alone. Preserve actual no-data/error outcomes; do not invent a receiver if none was selected."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "tier": "full",
+      "category": "timezone_correction",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Read the fixed clock when resolving yesterday: 2026-11-06, 22:00-23:00 UTC.",
+            "Preserve geographic evidence provenance. No benchmark polygon or Python geographic selector is available; do not claim otherwise.",
+            "If retrieved, cite the actual image source and report the true recording bounds. A five-minute PNG is not an hour-long image. Do not download WAV/PSD for a PNG-only request."
+          ]
+        },
+        {
+          "prompt": "Correction: use 10–11pm on 6 November 2026 in Europe/Brussels instead; keep the same receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Use convert_local_time for both local bounds, yielding 2026-11-06 21:00-22:00 UTC.",
+            "Keep a previously selected receiver; if none exists, acknowledge it rather than inventing one.",
+            "Old 22:00-23:00 UTC evidence does not fulfill the corrected request; retrieve the corrected interval or explain a genuine capability/operation failure."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "tier": "full",
+      "category": "geographic_correction",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Read the fixed clock when resolving yesterday: 2026-11-06, 22:00-23:00 UTC.",
+            "Preserve geographic evidence provenance. No benchmark polygon or Python geographic selector is available; do not claim otherwise.",
+            "If retrieved, cite the actual image source and report the true recording bounds. A five-minute PNG is not an hour-long image. Do not download WAV/PSD for a PNG-only request."
+          ]
+        },
+        {
+          "prompt": "Now use the southern benchmark region: inside Belgium with latitude below 50.5 degrees. Keep the same UTC date and hour.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Change the geographic constraint while retaining 2026-11-06 22:00-23:00 UTC.",
+            "Use returned registry coordinates for latitude; never keep a northern receiver as a qualifying southern selection.",
+            "Acknowledge unavailable polygon verification; disclose assumptions and missing capabilities. No fabricated geographic filtering or measurements."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P08",
+      "tier": "full",
+      "category": "controlled_no_candidates",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Read the fixed clock when resolving yesterday: 2026-11-06, 22:00-23:00 UTC.",
+            "Preserve geographic evidence provenance. No benchmark polygon or Python geographic selector is available; do not claim otherwise.",
+            "If retrieved, cite the actual image source and report the true recording bounds. A five-minute PNG is not an hour-long image. Do not download WAV/PSD for a PNG-only request.",
+            "If the fixture is exercised, report no candidate in the controlled catalog; do not infer that all real Belgium stations are absent.",
+            "Do not fabricate a station, coordinates or artifact. A limitation before reading the catalog is safe but does not exercise the failure condition."
+          ]
+        }
+      ],
+      "controlled_fixture": "no_candidates"
+    },
+    {
+      "id": "P09",
+      "tier": "full",
+      "category": "controlled_missing_png",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Read the fixed clock when resolving yesterday: 2026-11-06, 22:00-23:00 UTC.",
+            "Preserve geographic evidence provenance. No benchmark polygon or Python geographic selector is available; do not claim otherwise.",
+            "If retrieved, cite the actual image source and report the true recording bounds. A five-minute PNG is not an hour-long image. Do not download WAV/PSD for a PNG-only request.",
+            "If get_spectrogram returns no_spectrogram_found, explain that no PNG was returned for this query; do not infer no WAVs or recordings.",
+            "Do not silently change station region/date, invent a PNG or claim display. Mark unexercised if the missing-PNG response was never reached."
+          ]
+        }
+      ],
+      "controlled_fixture": "no_png",
+      "fixture_catalog_seed": {
+        "receiver_id": "BEHALL_SYS001",
+        "name": "Halle-Zoersel",
+        "location_code": "BEHALL",
+        "antenna": 1,
+        "catalog_start": "2022-08-28 08:00:00",
+        "catalog_end": "2026-11-07 19:00:00",
+        "coordinates": {
+          "longitude_degrees": 4.623141,
+          "latitude_degrees": 51.247878,
+          "altitude_m": 13.0,
+          "provenance": "location_registry",
+          "note": "Site coordinates; WAV antenna coordinates can differ. SDK converts registry altitude from km to m."
+        },
+        "coordinates_source_url": "https://brams.aeronomie.be/v4/location.php?location_code=BEHALL",
+        "benchmark_seed_provenance": {
+          "run": ".benchmarks/20261107-225011-318656",
+          "retrieved_at_utc": "2026-11-07T21:52:16.651161Z",
+          "note": "Actual registry row retained in a synthetic catalog subset; no country polygon check."
+        }
+      }
+    },
+    {
+      "id": "P10",
+      "tier": "full",
+      "category": "controlled_archive_failure",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Read the fixed clock when resolving yesterday: 2026-11-06, 22:00-23:00 UTC.",
+            "Preserve geographic evidence provenance. No benchmark polygon or Python geographic selector is available; do not claim otherwise.",
+            "If retrieved, cite the actual image source and report the true recording bounds. A five-minute PNG is not an hour-long image. Do not download WAV/PSD for a PNG-only request.",
+            "If an archive operation returns the controlled service error, availability remains unknown; this is not proof of no recordings.",
+            "Do not claim success or conceal a service failure. Mark unexercised if no archive failure result was observed."
+          ]
+        }
+      ],
+      "controlled_fixture": "archive_error",
+      "fixture_catalog_seed": {
+        "receiver_id": "BEHALL_SYS001",
+        "name": "Halle-Zoersel",
+        "location_code": "BEHALL",
+        "antenna": 1,
+        "catalog_start": "2022-08-28 08:00:00",
+        "catalog_end": "2026-11-07 19:00:00",
+        "coordinates": {
+          "longitude_degrees": 4.623141,
+          "latitude_degrees": 51.247878,
+          "altitude_m": 13.0,
+          "provenance": "location_registry",
+          "note": "Site coordinates; WAV antenna coordinates can differ. SDK converts registry altitude from km to m."
+        },
+        "coordinates_source_url": "https://brams.aeronomie.be/v4/location.php?location_code=BEHALL",
+        "benchmark_seed_provenance": {
+          "run": ".benchmarks/20261107-225011-318656",
+          "retrieved_at_utc": "2026-11-07T21:52:16.651161Z",
+          "note": "Actual registry row retained in a synthetic catalog subset; no country polygon check."
+        }
+      }
+    }
+  ],
+  "pilot_source": "benchmarks/conversation_geo_pilot.json",
+  "fixture_seed_provenance": {
+    "source_run": ".benchmarks/20261107-225011-318656",
+    "turns_sha256": "4684c1974141c119c7d0d5d75ad8368d8dc39adbe1805f9086d75d18ff99b929",
+    "note": "Only registry seed coordinates are real; negative catalog/file/service conditions are declared interventions."
+  }
+}

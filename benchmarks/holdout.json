@@ -1,0 +1,374 @@
+{
+  "schema_version": 1,
+  "suite_version": 2,
+  "name": "BRAMS v2 held-out task variants",
+  "note": "54 product tasks; final factual/grounding verdicts require human review. Reference notes are examples, not substitutes for captured evidence. Each case has a fresh chat, with actual setup turns for C/F follow-ups.",
+  "review_dimensions": [
+    "scientific_correctness",
+    "grounding",
+    "judgment",
+    "conversation",
+    "clarity"
+  ],
+  "cases": [
+    {
+      "id": "H01",
+      "tier": "H",
+      "category": "metadata",
+      "source_cards": [],
+      "capability_status": "supported",
+      "split": "holdout",
+      "reference_notes": "Capture and review actual reference; keep out of development prompt tuning.",
+      "turns": [
+        {
+          "prompt": "Where is BEBILZ_SYS001? Give registry latitude, longitude and altitude with source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "detail": "coordinates"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.latitude_degrees",
+              "label": "latitude_degrees"
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.longitude_degrees",
+              "label": "longitude_degrees"
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.altitude_m",
+              "label": "altitude_m"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H02",
+      "tier": "H",
+      "category": "metadata",
+      "source_cards": [],
+      "capability_status": "supported",
+      "split": "holdout",
+      "reference_notes": "Capture and review actual reference; keep out of development prompt tuning.",
+      "turns": [
+        {
+          "prompt": "Where is BEDINA_SYS001? Give registry latitude, longitude and altitude with source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEDINA_SYS001",
+                "detail": "coordinates"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEDINA_SYS001",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.latitude_degrees",
+              "label": "latitude_degrees"
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEDINA_SYS001",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.longitude_degrees",
+              "label": "longitude_degrees"
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEDINA_SYS001",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.altitude_m",
+              "label": "altitude_m"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H03",
+      "tier": "H",
+      "category": "time",
+      "source_cards": [],
+      "capability_status": "supported",
+      "split": "holdout",
+      "reference_notes": "Capture and review actual reference; keep out of development prompt tuning.",
+      "turns": [
+        {
+          "prompt": "Convert 29 March 2026 at 01:30 Brussels local time to UTC. Use the named timezone rules.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "convert_local_time",
+              "arguments": {
+                "local_datetime": "2026-03-29T01:30:00",
+                "timezone_name": "Europe/Brussels"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "convert_local_time",
+              "arguments": {
+                "local_datetime": "2026-03-29T01:30:00",
+                "timezone_name": "Europe/Brussels"
+              },
+              "path": "utc_time",
+              "label": "UTC time"
+            }
+          ],
+          "require_source": false,
+          "review_rubric": [
+            "Use the actual IANA rule for this specific time, not a month-wide offset assumption."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H04",
+      "tier": "H",
+      "category": "clarification",
+      "source_cards": [],
+      "capability_status": "supported",
+      "split": "holdout",
+      "reference_notes": "Capture and review actual reference; keep out of development prompt tuning.",
+      "turns": [
+        {
+          "prompt": "Get BEHUMA recordings at 02:30 Brussels local time on 25 October 2026.",
+          "kind": "clarification",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "This clock time occurs twice at the DST transition; ask which occurrence before querying recordings."
+          ],
+          "forbidden_tools": [
+            "get_recordings",
+            "check_availability",
+            "get_wav",
+            "get_spectrogram",
+            "get_psd"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H05",
+      "tier": "H",
+      "category": "recordings",
+      "source_cards": [],
+      "capability_status": "supported",
+      "split": "holdout",
+      "reference_notes": "Capture and review actual reference; keep out of development prompt tuning.",
+      "turns": [
+        {
+          "prompt": "For Bilzen BEBILZ_SYS001 at 21:15 UTC on 14 December 2023, report file size, exact start and sample rate; metadata only.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "sample_rate_hz",
+              "label": "sample rate",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "Hz",
+              "rel_tol": 0
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "size_bytes",
+              "label": "file size",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "bytes",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H06",
+      "tier": "H",
+      "category": "recordings",
+      "source_cards": [],
+      "capability_status": "supported",
+      "split": "holdout",
+      "reference_notes": "Capture and review actual reference; keep out of development prompt tuning.",
+      "turns": [
+        {
+          "prompt": "How long is the Humain primary-receiver file at 21:20 UTC on 14 December 2023? Use the requested slot rather than an earlier boundary file.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:20:00Z",
+                "end_utc": "2023-12-14T21:25:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:20:00Z",
+                "end_utc": "2023-12-14T21:25:00Z"
+              },
+              "path": "duration_seconds",
+              "label": "requested duration",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:20:00Z"
+              },
+              "unit": "s",
+              "rel_tol": 0,
+              "abs_tol": 0.001
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H07",
+      "tier": "H",
+      "category": "resilience",
+      "source_cards": [],
+      "capability_status": "supported",
+      "split": "holdout",
+      "reference_notes": "Capture and review actual reference; keep out of development prompt tuning.",
+      "turns": [
+        {
+          "prompt": "Find BRAMS receiver BENONE_SYS001 and explain what the catalog lookup establishes.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BENONE_SYS001"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BENONE_SYS001"
+              },
+              "path": "count",
+              "label": "matching receivers",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Do not confuse an empty catalog match with a network error."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H08",
+      "tier": "H",
+      "category": "resource_control",
+      "source_cards": [],
+      "capability_status": "supported",
+      "split": "holdout",
+      "reference_notes": "Capture and review actual reference; keep out of development prompt tuning.",
+      "turns": [
+        {
+          "prompt": "Download WAVs for every antenna at Humain for every day in December 2023.",
+          "kind": "budget",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explain scope and tool limits, offer a bounded plan, and do not begin a download loop."
+          ],
+          "max_tool_calls": 2
+        }
+      ]
+    }
+  ]
+}

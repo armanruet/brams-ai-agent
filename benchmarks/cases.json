@@ -1,0 +1,652 @@
+{
+  "schema_version": 1,
+  "name": "BRAMS tool-calling benchmark v1",
+  "note": "20 supported/behavioral tasks. Reference values must be captured with real Python tools before snapshot runs. Automatic checks do not replace answer review.",
+  "cases": [
+    {
+      "id": "network_inventory",
+      "category": "catalog",
+      "source_cards": [
+        "A01"
+      ],
+      "turns": [
+        {
+          "prompt": "How many receivers and sites are in the BRAMS receiver catalog? Show at most five example receiver IDs.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {}
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "path": "count",
+              "label": "receiver count"
+            },
+            {
+              "tool": "list_receivers",
+              "path": "location_count",
+              "label": "site count"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "humain_antennas",
+      "category": "catalog",
+      "source_cards": [
+        "A04"
+      ],
+      "turns": [
+        {
+          "prompt": "List the receiver IDs registered at site BEHUMA and state how many there are.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "path": "count",
+              "label": "antenna count"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "site_coordinates",
+      "category": "metadata",
+      "source_cards": [
+        "A02",
+        "C06"
+      ],
+      "turns": [
+        {
+          "prompt": "Give latitude and longitude in decimal degrees, and altitude in metres, for BRAMS site BEHUMA. Specify the source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "path": "receivers.0.coordinates.latitude_degrees",
+              "label": "latitude"
+            },
+            {
+              "tool": "list_receivers",
+              "path": "receivers.0.coordinates.longitude_degrees",
+              "label": "longitude"
+            },
+            {
+              "tool": "list_receivers",
+              "path": "receivers.0.coordinates.altitude_m",
+              "label": "altitude"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "beacon_metadata",
+      "category": "metadata",
+      "source_cards": [
+        "A03",
+        "F03"
+      ],
+      "turns": [
+        {
+          "prompt": "Look up BEDOUR: give its transmit frequency in Hz, power in W, and wavelength in metres, with a source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_beacon",
+              "path": "frequency_hz",
+              "label": "transmitter frequency"
+            },
+            {
+              "tool": "get_beacon",
+              "path": "power_w",
+              "label": "transmitter power"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "beacon_distance",
+      "category": "metadata",
+      "source_cards": [
+        "B06"
+      ],
+      "turns": [
+        {
+          "prompt": "Calculate the surface distance in km between receiver BEHUMA_SYS001 and the BEDOUR transmitter. State the method and sources.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR",
+                "receiver_search": "BEHUMA_SYS001"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_beacon",
+              "path": "distance_km",
+              "label": "distance"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "recording_list",
+      "category": "archive",
+      "source_cards": [
+        "A07"
+      ],
+      "turns": [
+        {
+          "prompt": "List BEHUMA_SYS001 recordings for 2023-12-14 21:15-21:45 UTC. Give the total metadata count and label any preceding boundary file.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "path": "count",
+              "label": "file count"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "recording_precision",
+      "category": "archive",
+      "source_cards": [
+        "A08",
+        "A09",
+        "A14",
+        "D08"
+      ],
+      "turns": [
+        {
+          "prompt": "For BEHUMA_SYS001, 2023-12-14 21:15-21:20 UTC, list recording metadata: exact UTC start, duration in seconds, sample rate in Hz and byte size. Do not download audio.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "path": "recordings.0.sample_rate_hz",
+              "label": "sample rate"
+            },
+            {
+              "tool": "get_recordings",
+              "path": "recordings.0.duration_seconds",
+              "label": "duration"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "kirchberg_availability",
+      "category": "availability",
+      "source_cards": [
+        "B05"
+      ],
+      "turns": [
+        {
+          "prompt": "Check archive recording availability for Kirchberg from 22/10/2026 00:00:00 to 22/10/2026 01:00:00 UTC. Give the receiver IDs, coverage and source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "Kirchberg",
+                "start_utc": "2026-10-22T00:00:00Z",
+                "end_utc": "2026-10-22T01:00:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "network_availability",
+      "category": "availability",
+      "source_cards": [
+        "A16",
+        "C07"
+      ],
+      "turns": [
+        {
+          "prompt": "Which receivers have archived recordings on 2024-07-29 from 23:00 to 23:45 UTC? Use one network-wide query and explain any expanded-hour limitation.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "",
+                "start_utc": "2024-07-29T23:00:00Z",
+                "end_utc": "2024-07-29T23:45:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "exact_spectrogram",
+      "category": "media",
+      "source_cards": [
+        "A10",
+        "C03"
+      ],
+      "turns": [
+        {
+          "prompt": "Fetch one archived spectrogram for BEHUMA_SYS001, 2023-12-14 21:15-21:20 UTC. State the actual filename and PNG source URL.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_spectrogram",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_spectrogram",
+              "path": "filename",
+              "label": "PNG filename"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "original_wav",
+      "category": "media",
+      "source_cards": [
+        "C01",
+        "C05"
+      ],
+      "turns": [
+        {
+          "prompt": "Get the original WAV for BEHUMA_SYS001, 2023-12-14 21:15-21:20 UTC. Give the filename and explain how the player preview differs from the scientific original.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_wav",
+              "path": "filename",
+              "label": "WAV filename"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "noise_psd",
+      "category": "science",
+      "source_cards": [
+        "A11",
+        "A12",
+        "C04",
+        "C08"
+      ],
+      "turns": [
+        {
+          "prompt": "Measure the noise PSD in the 800-900 Hz band and calibrator PSD for BEHUMA_SYS001, 2023-12-14 21:15-21:20 UTC. Include units, both bands, and the WAV source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_psd",
+              "path": "noise_psd",
+              "label": "noise PSD"
+            },
+            {
+              "tool": "get_psd",
+              "path": "calibrator_psd",
+              "label": "calibrator PSD"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "offset_duration",
+      "category": "time",
+      "source_cards": [
+        "T3"
+      ],
+      "turns": [
+        {
+          "prompt": "Use Python to calculate how many minutes are between 2026-10-28T11:00:00+01:00 and 2026-10-28T12:30:00+01:00, and give the UTC bounds.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "inspect_time_window",
+              "arguments": {
+                "start_utc": "2026-10-28T11:00:00+01:00",
+                "end_utc": "2026-10-28T12:30:00+01:00"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "inspect_time_window",
+              "path": "duration_minutes",
+              "label": "duration in minutes"
+            }
+          ],
+          "require_source": false
+        }
+      ]
+    },
+    {
+      "id": "brussels_time",
+      "category": "time",
+      "source_cards": [
+        "D07"
+      ],
+      "turns": [
+        {
+          "prompt": "Convert 2023-12-15 23:30 Brussels local time to UTC using Python zoneinfo. Do not query recordings.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "convert_local_time",
+              "arguments": {
+                "local_datetime": "2023-12-15T23:30:00",
+                "timezone_name": "Europe/Brussels"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "convert_local_time",
+              "path": "utc_time",
+              "label": "correct UTC timestamp"
+            }
+          ],
+          "require_source": false
+        }
+      ]
+    },
+    {
+      "id": "unknown_receiver",
+      "category": "resilience",
+      "source_cards": [
+        "D04"
+      ],
+      "turns": [
+        {
+          "prompt": "Find receiver BEFAKE_SYS001 in the BRAMS receiver registry. If there is no match, state that without inventing a station.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEFAKE_SYS001"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "path": "count",
+              "label": "matching count"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "missing_date",
+      "category": "resilience",
+      "source_cards": [
+        "D05"
+      ],
+      "turns": [
+        {
+          "prompt": "Show BEHUMA data.",
+          "kind": "clarification",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false
+        }
+      ]
+    },
+    {
+      "id": "unsupported_detection",
+      "category": "resilience",
+      "source_cards": [
+        "B01",
+        "D10"
+      ],
+      "turns": [
+        {
+          "prompt": "Can this prototype calculate meteor echo Doppler and time of flight for BEHUMA at 21:16 on 2023-12-14? Tell me what its implemented tools can actually establish; do not invent measurements.",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false
+        }
+      ]
+    },
+    {
+      "id": "followup_time",
+      "category": "conversation",
+      "source_cards": [
+        "F01"
+      ],
+      "turns": [
+        {
+          "prompt": "List recordings for BEHUMA_SYS001 on 2023-12-14 from 21:15 to 21:45 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true
+        },
+        {
+          "prompt": "And 30 minutes later, using the same receiver and duration?",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:45:00Z",
+                "end_utc": "2023-12-14T22:15:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "followup_receiver",
+      "category": "conversation",
+      "source_cards": [
+        "F02"
+      ],
+      "turns": [
+        {
+          "prompt": "List recordings for BEHUMA_SYS001 on 2023-12-14 from 21:15 to 21:45 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true
+        },
+        {
+          "prompt": "Now the same interval for BEBILZ_SYS001.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true
+        }
+      ]
+    },
+    {
+      "id": "followup_header",
+      "category": "conversation",
+      "source_cards": [
+        "A13",
+        "C02",
+        "F03"
+      ],
+      "turns": [
+        {
+          "prompt": "Get the original WAV for BEHUMA_SYS001 on 2023-12-14 from 21:15 to 21:20 UTC and keep its header metadata.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true
+        },
+        {
+          "prompt": "Using that returned header, give the LO and beacon frequencies in Hz and their nominal difference. Do not download it again.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "get_wav",
+              "path": "header_summary.lo_frequency_hz",
+              "label": "LO"
+            },
+            {
+              "tool": "get_wav",
+              "path": "header_summary.beacon_frequency_hz",
+              "label": "beacon"
+            },
+            {
+              "tool": "get_wav",
+              "path": "header_summary.nominal_beacon_minus_lo_hz",
+              "label": "nominal difference"
+            }
+          ],
+          "require_source": true
+        }
+      ]
+    }
+  ]
+}

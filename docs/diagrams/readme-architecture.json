@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "BRAMS AI Assistant \u00b7 System Architecture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1380,
+      875
+    ]
+  },
+  "components": [
+    {
+      "id": "chat",
+      "type": "frontend",
+      "label": "Gradio Research Workspace",
+      "sublabel": "Chat \u00b7 images \u00b7 audio",
+      "tag": "Request monitor \u00b7 local / hosted settings",
+      "pos": [
+        44,
+        350
+      ],
+      "size": [
+        266,
+        140
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent & Turn Orchestration",
+      "sublabel": "Pydantic AI \u00b7 session history",
+      "tag": "Validated calls \u00b7 response paths",
+      "pos": [
+        407,
+        350
+      ],
+      "size": [
+        266,
+        140
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "BRAMS & Science Tools",
+      "sublabel": "Stations \u00b7 geography \u00b7 recordings",
+      "tag": "Availability \u00b7 time \u00b7 WAV \u00b7 PSD",
+      "pos": [
+        770,
+        350
+      ],
+      "size": [
+        266,
+        140
+      ]
+    },
+    {
+      "id": "archive",
+      "type": "external",
+      "label": "BRAMS Data Archive",
+      "sublabel": "Receiver and beacon metadata",
+      "tag": "Availability \u00b7 archived PNG / WAV",
+      "pos": [
+        1133,
+        350
+      ],
+      "size": [
+        204,
+        140
+      ]
+    },
+    {
+      "id": "model",
+      "type": "backend",
+      "label": "Language Model Endpoint",
+      "sublabel": "Local llama.cpp or hosted API",
+      "tag": "Reasoning \u00b7 tool calls \u00b7 explanations",
+      "pos": [
+        407,
+        55
+      ],
+      "size": [
+        266,
+        130
+      ]
+    },
+    {
+      "id": "safeguards",
+      "type": "security",
+      "label": "Evidence & Run Safeguards",
+      "sublabel": "Grounding \u00b7 retries \u00b7 recovery",
+      "tag": "Limits \u00b7 provenance \u00b7 coverage",
+      "pos": [
+        770,
+        55
+      ],
+      "size": [
+        266,
+        130
+      ]
+    },
+    {
+      "id": "vision",
+      "type": "backend",
+      "label": "Local Meteor Detection",
+      "sublabel": "YOLOv11-n \u00b7 ONNX Runtime",
+      "tag": "Echo candidates \u00b7 UTC estimates",
+      "pos": [
+        770,
+        665
+      ],
+      "size": [
+        266,
+        140
+      ]
+    },
+    {
+      "id": "artifacts",
+      "type": "database",
+      "label": "Local Media & Provenance",
+      "sublabel": "Spectrograms \u00b7 annotated images",
+      "tag": "Original WAV \u00b7 preview \u00b7 checksums",
+      "pos": [
+        44,
+        665
+      ],
+      "size": [
+        266,
+        140
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "ask",
+      "from": "chat",
+      "to": "agent",
+      "label": "Question + answer",
+      "variant": "emphasis"
+    },
+    {
+      "id": "plan",
+      "from": "agent",
+      "to": "model",
+      "label": "Prompt + tool calls"
+    },
+    {
+      "id": "execute",
+      "from": "agent",
+      "to": "tools",
+      "label": "Calls + results",
+      "variant": "emphasis"
+    },
+    {
+      "id": "guard",
+      "from": "safeguards",
+      "to": "tools",
+      "label": "Validate + ground",
+      "variant": "security",
+      "labelAt": [
+        903,
+        260
+      ]
+    },
+    {
+      "id": "retrieve",
+      "from": "tools",
+      "to": "archive",
+      "label": "Query + download",
+      "variant": "emphasis"
+    },
+    {
+      "id": "infer",
+      "from": "tools",
+      "to": "vision",
+      "label": "Spectrogram + bounds",
+      "variant": "emphasis",
+      "labelAt": [
+        903,
+        570
+      ]
+    },
+    {
+      "id": "annotate",
+      "from": "vision",
+      "to": "artifacts",
+      "label": "Save annotated image"
+    },
+    {
+      "id": "present",
+      "from": "artifacts",
+      "to": "chat",
+      "label": "Display + play + download"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "From a question to an answer",
+      "items": [
+        "The language model proposes tool calls; Python retrieves evidence and performs the analysis.",
+        "Answers report the analyzed interval, source and any incomplete coverage."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Local vision, separate from the language model",
+      "items": [
+        "The detector analyzes archived spectrograms or a WAV-derived rendering, then adds candidate boxes.",
+        "Media stays local; the selected model receives structured text and tool results, not image bytes."
+      ]
+    }
+  ]
+}

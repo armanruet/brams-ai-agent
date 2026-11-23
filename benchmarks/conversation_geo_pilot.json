@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "suite_version": 3,
+  "name": "Conversation and geography: as-is capability pilot",
+  "protocol": "capability_baseline",
+  "note": "Three cases / six turns. Use --mode live --clock 2026-11-07T12:00:00Z. Production tools are unchanged. No country polygon or geographic selector is supplied: do not grade missing system capability as model failure. Required calls are intentionally not rigid; all four dimensions require trajectory review. This is not the enhanced geography evaluation or its controlled failure fixtures.",
+  "cases": [
+    {
+      "id": "P01", "tier": "pilot", "category": "query_understanding",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [{
+        "prompt": "Can you get me a spectrogram from any station in the north of Belgium between 10pm to 11pm yeterday?",
+        "kind": "tool", "required_calls": [], "facts": [], "require_source": false,
+        "review_rubric": [
+          "Recognizes yesterday despite the typo and requests one spectrogram, not WAV or PSD.",
+          "Reads the clock if resolving yesterday. With the fixed clock, unspecified time defaults to 2026-11-06 22:00-23:00 UTC, stated explicitly. Clarification is acceptable.",
+          "Clarifies the intended north boundary or explains the geographic capability limit; never invents a geographic selection or source.",
+          "Grade query understanding and safe clarification separately from completed retrieval. No geographic selection tool/polygon is supplied in this baseline."
+        ]
+      }]
+    },
+    {
+      "id": "P02", "tier": "pilot", "category": "clarification_and_geography",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Can you get me a spectrogram from any station in the north of Belgium between 10pm to 11pm yeterday?",
+          "kind": "tool", "required_calls": [], "facts": [], "require_source": false,
+          "review_rubric": ["Understand the typo, relative date and spectrogram request. State the UTC default or clarify it; do not silently guess the northern boundary or a station."]
+        },
+        {
+          "prompt": "Use UTC. By north I mean inside Belgium with registry latitude at least 51.0 degrees, using the benchmark country polygon.",
+          "kind": "tool", "required_calls": [], "facts": [], "require_source": false,
+          "review_rubric": [
+            "Retains the prior spectrogram intent and resolves yesterday to 2026-11-06 22:00-23:00 UTC.",
+            "Acknowledges that this baseline has no supplied benchmark polygon or Python geographic filter. May request suitable region/station evidence or explain the missing capability.",
+            "Registry coordinates can be retrieved, but latitude alone does not establish membership inside Belgium. Do not claim a polygon check occurred.",
+            "A clarification/limitation is not a successful PNG retrieval; record model behavior separately from the system capability gap."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P03", "tier": "pilot", "category": "exact_repetition",
+      "capability_status": "geographic_selection_not_implemented",
+      "turns": [
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "tool", "required_calls": [], "facts": [], "require_source": false,
+          "review_rubric": ["Use the fixed clock when resolving yesterday. Do not invent the unavailable polygon/geographic tool, station eligibility, PNG or source. Distinguish a safe capability limit from task completion."]
+        },
+        {
+          "prompt": "Get one archived spectrogram from any receiver inside Belgium with registry latitude at least 51.0 degrees, between 22:00 and 23:00 UTC yesterday. Use the benchmark country polygon and registry coordinates to choose the receiver.",
+          "kind": "recall", "required_calls": [], "facts": [], "require_source": false,
+          "review_rubric": [
+            "Recognizes an identical repeated question. Remains consistent with earlier real evidence or the earlier capability limitation, without invented progress.",
+            "Unnecessary repeated calls are an efficiency issue, separate from factual correctness. Do not require artifact reuse if no successful artifact exists."
+          ]
+        },
+        {
+          "prompt": "Show that same spectrogram again with its receiver ID and exact recording time.",
+          "kind": "recall", "required_calls": [], "facts": [], "require_source": false,
+          "review_rubric": [
+            "If no spectrogram was actually returned, explicitly say so rather than inventing the referenced plot, receiver or time.",
+            "If valid earlier media exists, preserve the actual receiver, recording bounds, source and artifact; record whether the UI can expose it without a fresh download.",
+            "Score unsupported-reference handling when no media exists; mark successful-artifact redisplay and reuse N/A rather than claiming it was tested."
+          ]
+        }
+      ]
+    }
+  ]
+}

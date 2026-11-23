@@ -1,0 +1,3 @@
+# Use Python 3.13 or newer for the actual PyBRAMS integration.
+-r requirements.txt
+pybrams==0.1.7

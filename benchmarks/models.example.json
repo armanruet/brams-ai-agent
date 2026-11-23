@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "protocol": {
+    "max_tokens": 4096,
+    "recovery_max_tokens": 8192,
+    "timeout_seconds": 180,
+    "request_limit": 6,
+    "tool_calls_limit": 6
+  },
+  "models": [
+    {
+      "id": "ornith",
+      "label": "Ornith 1.5 9B",
+      "enabled": true,
+      "provider": "local",
+      "base_url": "http://127.0.0.1:8080/v1",
+      "model": "ornith-ai/Ornith-1.5-9B-GGUF:Q4_K_M",
+      "api_key_env": "BENCHMARK_LOCAL_API_KEY",
+      "deployment": {
+        "quantization": "Q4_K_M",
+        "context_from_preset": 16384,
+        "sampling_from_preset": {
+          "temperature": 0.6,
+          "top_k": 20,
+          "top_p": 0.95,
+          "min_p": 0
+        },
+        "reasoning_from_preset": {
+          "enabled": true,
+          "budget": 128
+        },
+        "settings_verified_at_runtime": false
+      }
+    },
+    {
+      "id": "liquid",
+      "label": "LiquidAI/LFM3-1.7B",
+      "enabled": true,
+      "provider": "local",
+      "base_url": "http://127.0.0.1:8080/v1",
+      "model": "LiquidAI/LFM3-1.7B-GGUF:Q8_0",
+      "api_key_env": "BENCHMARK_LOCAL_API_KEY",
+      "deployment": {
+        "quantization": "Q8_0",
+        "context_from_preset": 65536,
+        "sampling_from_preset": {
+          "temperature": 0.6,
+          "top_k": 20,
+          "top_p": 0.95,
+          "min_p": 0
+        },
+        "reasoning_from_preset": "not explicitly configured",
+        "settings_verified_at_runtime": false
+      }
+    },
+    {
+      "id": "spark",
+      "label": "XHToken/Spark-X2.6-4B",
+      "enabled": true,
+      "provider": "local",
+      "base_url": "http://127.0.0.1:8080/v1",
+      "model": "XHToken/Spark-X2.6-4B-GGUF:Q8_0",
+      "api_key_env": "BENCHMARK_LOCAL_API_KEY",
+      "deployment": {
+        "quantization": "Q8_0",
+        "context_from_preset": 65536,
+        "sampling_from_preset": {
+          "temperature": 0.6,
+          "top_k": 20,
+          "top_p": 0.95,
+          "min_p": 0
+        },
+        "reasoning_from_preset": "not explicitly configured",
+        "settings_verified_at_runtime": false
+      }
+    },
+    {
+      "id": "public",
+      "label": "Public API baseline - configure provider and exact model",
+      "enabled": false,
+      "provider": "compatible",
+      "base_url": "https://api.river.ai/v1",
+      "model": "zai-org/GLM-5.3-Flash",
+      "api_key_env": "BENCHMARK_PUBLIC_API_KEY",
+      "deployment": {
+        "settings_verified_at_runtime": false
+      }
+    }
+  ],
+  "comparison_note": "As-deployed comparison: Ornith Q4_K_M, Liquid/Spark Q8_0. Preset metadata read 2026-11-01; actual server settings and model loading still require verification. Sampling is left to server defaults, including hosted defaults."
+}

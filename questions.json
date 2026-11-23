@@ -1,0 +1,2732 @@
+{
+  "schema_version": 1,
+  "suite_version": 2,
+  "name": "BRAMS grounded assistant evaluation v2",
+  "note": "54 product tasks; final factual/grounding verdicts require human review. Reference notes are examples, not substitutes for captured evidence. Each case has a fresh chat, with actual setup turns for C/F follow-ups.",
+  "review_dimensions": [
+    "scientific_correctness",
+    "grounding",
+    "judgment",
+    "conversation",
+    "clarity"
+  ],
+  "cases": [
+    {
+      "id": "A01",
+      "tier": "A",
+      "category": "catalog",
+      "source_cards": [
+        "A01"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Latest 2026-11-01 reference: 74 receivers, 65 sites; capture current counts.",
+      "turns": [
+        {
+          "prompt": "Which receivers does the BRAMS network operate? Summarize receiver and site counts and show at most five examples.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {}
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {},
+              "path": "count",
+              "label": "receiver count",
+              "rel_tol": 0
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {},
+              "path": "location_count",
+              "label": "site count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Count receiver rows separately from unique locations.",
+            "Do not mistake catalog entries for current uptime."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A02",
+      "tier": "A",
+      "category": "metadata",
+      "source_cards": [
+        "A02"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Registry BEHUMA site: latitude 50.192434, longitude 5.254884, altitude 294 m. WAV antenna coordinates are a different source.",
+      "turns": [
+        {
+          "prompt": "Give the exact site-registry coordinates of BRAMS station BEHUMA, including altitude in metres and their source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.latitude_degrees",
+              "label": "latitude",
+              "rel_tol": 0,
+              "abs_tol": 1e-06
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.longitude_degrees",
+              "label": "longitude",
+              "rel_tol": 0,
+              "abs_tol": 1e-06
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.altitude_m",
+              "label": "registry altitude",
+              "rel_tol": 0,
+              "abs_tol": 0.1
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations.",
+            "Distinguish registry site coordinates from WAV-header antenna coordinates."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A03",
+      "tier": "A",
+      "category": "metadata",
+      "source_cards": [
+        "A03"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "BEDOUR registry: 49,970,000 Hz, 150 W, RHCP; registry and header beacon coordinates differ.",
+      "turns": [
+        {
+          "prompt": "Where is the BEDOUR beacon and on what frequency does it transmit? Include power and sources.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              },
+              "path": "frequency_hz",
+              "label": "transmit frequency",
+              "unit": "Hz"
+            },
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              },
+              "path": "power_w",
+              "label": "power",
+              "unit": "W"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A04",
+      "tier": "A",
+      "category": "catalog",
+      "source_cards": [
+        "A04"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "BEHUMA is Humain, with six antennas in the reference capture.",
+      "turns": [
+        {
+          "prompt": "How many antennas does the Humain site have? List their receiver IDs.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA"
+              },
+              "path": "count",
+              "label": "antenna count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "List only matching catalog IDs; do not invent names or coverage."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A05",
+      "tier": "A",
+      "category": "catalog",
+      "source_cards": [
+        "A05"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Capture the BEECON catalog; expected reference IDs SYS001-SYS005.",
+      "turns": [
+        {
+          "prompt": "List the receivers registered at site BEECON.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEECON"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEECON"
+              },
+              "path": "count",
+              "label": "receiver count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Distinguish catalog registration from archive availability."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A06",
+      "tier": "A",
+      "category": "recordings",
+      "source_cards": [
+        "A06"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Re-capture the full metadata count and boundaries; the old 289-file claim is not a universal constant.",
+      "turns": [
+        {
+          "prompt": "What files does BEHUMA have on 2023-12-14 UTC? Give the total count, first and last filenames, and a short sample; metadata only.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T00:00:00Z",
+                "end_utc": "2023-12-15T00:00:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T00:00:00Z",
+                "end_utc": "2023-12-15T00:00:00Z"
+              },
+              "path": "count",
+              "label": "file count",
+              "rel_tol": 0
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T00:00:00Z",
+                "end_utc": "2023-12-15T00:00:00Z"
+              },
+              "path": "first_filename",
+              "label": "first filename"
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T00:00:00Z",
+                "end_utc": "2023-12-15T00:00:00Z"
+              },
+              "path": "last_filename",
+              "label": "last filename"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Use the full count even if rows are paginated.",
+            "No bulk WAV download; explain any prior boundary file."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A07",
+      "tier": "A",
+      "category": "recordings",
+      "source_cards": [
+        "A07"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Reference count 7 includes the 21:10 preceding boundary slot.",
+      "turns": [
+        {
+          "prompt": "Show BEHUMA recordings between 21:15 and 21:45 UTC on 2023-12-14. Include the count and identify any preceding boundary file.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              },
+              "path": "count",
+              "label": "file count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations.",
+            "Label the 21:10 boundary file; do not call it a slot starting inside the requested window."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A08",
+      "tier": "A",
+      "category": "recordings",
+      "source_cards": [
+        "A08"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Reference rates: Humain 5512.5 Hz; Bilzen 6048 Hz. These describe the selected recordings, not all historic hardware.",
+      "turns": [
+        {
+          "prompt": "Compare the sample rates of BEHUMA_SYS001 and BEBILZ_SYS001 recordings at 21:15 UTC on 2023-12-14. Label each receiver and cite the files.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "sample_rate_hz",
+              "label": "sample rate for BEHUMA_SYS001",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "Hz",
+              "rel_tol": 0,
+              "abs_tol": 1e-06
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "sample_rate_hz",
+              "label": "sample rate for BEBILZ_SYS001",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "Hz",
+              "rel_tol": 0,
+              "abs_tol": 1e-06
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations.",
+            "Hardware labels inferred from metadata are not an authoritative hardware inventory."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A09",
+      "tier": "A",
+      "category": "recordings",
+      "source_cards": [
+        "A09"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Reference requested 21:15 file: 3,315,484 bytes. File sizes vary by slot.",
+      "turns": [
+        {
+          "prompt": "How large is the BEHUMA_SYS001 recording at 21:15 UTC on 2023-12-14? Give bytes and an approximate MB size.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "size_bytes",
+              "label": "requested file byte size",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "bytes",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A10",
+      "tier": "A",
+      "category": "media",
+      "source_cards": [
+        "A10"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Actual archived PNG should attach; the model has no image pixels as input.",
+      "turns": [
+        {
+          "prompt": "Show the spectrogram of BEHUMA on 2023-12-14 at 21:15 UTC and provide its source link.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_spectrogram",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_spectrogram",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "filename",
+              "label": "PNG filename"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Resolve the actual PNG attachment and original source.",
+            "Do not claim visual echo or aircraft analysis."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A11",
+      "tier": "A",
+      "category": "science",
+      "source_cards": [
+        "A11"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Reference noise PSD 2.367889200171257e-6, normalized ADC²/Hz, noise band 800-900 Hz.",
+      "turns": [
+        {
+          "prompt": "What's the noise level in BEHUMA's 21:15 recording on 2023-12-14 UTC? Include the band, units and WAV source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "noise_psd",
+              "label": "noise PSD",
+              "rel_tol": 0.005
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations.",
+            "Use original WAV science data, not the normalized preview."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A12",
+      "tier": "A",
+      "category": "science",
+      "source_cards": [
+        "A12"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Reference calibrator PSD 3.484866579166412e-4 around measured 1505.12658 Hz, half width 3 Hz; distinct from nominal beacon offset.",
+      "turns": [
+        {
+          "prompt": "For BEHUMA_SYS001 at 21:15 UTC on 2023-12-14, how strong is the calibrator tone? Include its measured frequency, analysis band, PSD units and source.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "calibrator_psd",
+              "label": "calibrator PSD"
+            },
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "calibrator_frequency_hz",
+              "label": "measured calibrator frequency",
+              "unit": "Hz"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations.",
+            "Do not substitute the nominal 1000 Hz beacon-minus-LO difference for the measured calibrator peak."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A13",
+      "tier": "A",
+      "category": "metadata",
+      "source_cards": [
+        "A13"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "LO 49,969,000 Hz; beacon 49,970,000 Hz; nominal beacon-minus-LO is +1000 Hz, not 1005 Hz. Measured peaks require separate analysis.",
+      "turns": [
+        {
+          "prompt": "What frequency did BEHUMA_SYS001 listen at in its 21:15 UTC recording on 2023-12-14? Give LO, beacon and nominal beacon-minus-LO frequencies.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "header_summary.lo_frequency_hz",
+              "label": "LO",
+              "unit": "Hz",
+              "rel_tol": 0,
+              "abs_tol": 0.01
+            },
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "header_summary.beacon_frequency_hz",
+              "label": "beacon",
+              "unit": "Hz",
+              "rel_tol": 0,
+              "abs_tol": 0.01
+            },
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "header_summary.nominal_beacon_minus_lo_hz",
+              "label": "nominal offset",
+              "unit": "Hz",
+              "rel_tol": 0,
+              "abs_tol": 0.01
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A14",
+      "tier": "A",
+      "category": "metadata",
+      "source_cards": [
+        "A14"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Select the 21:15 filename, not the preceding 21:10 boundary row: 2023-12-14T21:15:00.809161Z.",
+      "turns": [
+        {
+          "prompt": "What is the exact start timestamp of the BEHUMA_SYS001 file at 21:15 UTC on 2023-12-14? Give microsecond precision and cite the file.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "recording_start_utc",
+              "label": "requested recording start",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "datetime_tolerance_seconds": 1e-06
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Use the requested slot, not the prior boundary file.",
+            "Read exact metadata/header time; do not reconstruct it from the filename."
+          ],
+          "acceptable_call_sets": [
+            [
+              {
+                "tool": "get_wav",
+                "arguments": {
+                  "search": "BEHUMA_SYS001",
+                  "start_utc": "2023-12-14T21:15:00Z",
+                  "end_utc": "2023-12-14T21:20:00Z"
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A15",
+      "tier": "A",
+      "category": "judgment",
+      "source_cards": [
+        "A15"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Raw state 0 and unknown GPS-quality fields are not evidence of a healthy GPS fix.",
+      "turns": [
+        {
+          "prompt": "Was BEHUMA_SYS001's GPS clock healthy during the 21:15 UTC recording on 2023-12-14? Explain what the header actually establishes.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "State unknown GPS quality if returned unknown; zero flags alone do not establish health.",
+            "Do not infer drift, synchronization or timing precision from PPS count alone."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A16",
+      "tier": "A",
+      "category": "availability",
+      "source_cards": [
+        "A16"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Latest expanded-hour reference: 44 full, 23 none, 7 unknown across 74 receivers. Capture afresh; the former 51/nonzero gold used different semantics.",
+      "turns": [
+        {
+          "prompt": "Which receivers have archived recordings on 2024-07-29 from 23:00 to 23:45 UTC? Summarize counts and explain the time-resolution limits.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "",
+                "start_utc": "2024-07-29T23:00:00Z",
+                "end_utc": "2024-07-29T23:45:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "",
+                "start_utc": "2024-07-29T23:00:00Z",
+                "end_utc": "2024-07-29T23:45:00Z"
+              },
+              "path": "coverage_counts.full",
+              "label": "full count",
+              "rel_tol": 0
+            },
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "",
+                "start_utc": "2024-07-29T23:00:00Z",
+                "end_utc": "2024-07-29T23:45:00Z"
+              },
+              "path": "coverage_counts.none",
+              "label": "none count",
+              "rel_tol": 0
+            },
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "",
+                "start_utc": "2024-07-29T23:00:00Z",
+                "end_utc": "2024-07-29T23:45:00Z"
+              },
+              "path": "coverage_counts.unknown",
+              "label": "unknown count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Receiver membership must match the returned category, not just aggregate counts.",
+            "Unknown is not none; hourly availability is not station uptime or proof of exact sub-hour coverage.",
+            "An hourly metric is not a claim that WAV files last one hour."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B01",
+      "tier": "B",
+      "category": "unsupported",
+      "source_cards": [
+        "B01"
+      ],
+      "capability_status": "limitation",
+      "split": "development",
+      "reference_notes": "No find_echoes/Doppler/TOF tool is registered. Future numerical claims are not current gold answers.",
+      "turns": [
+        {
+          "prompt": "Was there a meteor echo near 21:16 UTC on 2023-12-14 at BEHUMA? What did it look like?",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explicitly explain the requested capability is not implemented.",
+            "Do not invent detections, measurements, external matches, exported files or completed actions.",
+            "Offer a bounded supported next step; do not treat unavailable capability as proof no event exists."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B02",
+      "tier": "B",
+      "category": "unsupported",
+      "source_cards": [
+        "B02"
+      ],
+      "capability_status": "limitation",
+      "split": "development",
+      "reference_notes": "Cleaning and producing a cleaned WAV are not implemented.",
+      "turns": [
+        {
+          "prompt": "Clean BEHUMA's 21:15 recording on 2023-12-14 UTC. What changed?",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explicitly explain the requested capability is not implemented.",
+            "Do not invent detections, measurements, external matches, exported files or completed actions.",
+            "Offer a bounded supported next step; do not treat unavailable capability as proof no event exists."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B03",
+      "tier": "B",
+      "category": "science",
+      "source_cards": [
+        "B03"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Capture both actual PSDs; Bilzen noise must never be invented from Humain.",
+      "turns": [
+        {
+          "prompt": "Compare the noise floor of BEHUMA_SYS001 and BEBILZ_SYS001 at 21:15 UTC on 2023-12-14. Use the same 800-900 Hz band and label sources and units.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            },
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "noise_psd",
+              "label": "noise PSD for BEHUMA_SYS001"
+            },
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "noise_psd",
+              "label": "noise PSD for BEBILZ_SYS001"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations.",
+            "Keep each value associated with its receiver and original WAV."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B04",
+      "tier": "B",
+      "category": "unsupported",
+      "source_cards": [
+        "B04"
+      ],
+      "capability_status": "limitation",
+      "split": "development",
+      "reference_notes": "Merging and continuity analysis are not implemented; no stitched WAV or PPS sum should be claimed.",
+      "turns": [
+        {
+          "prompt": "Merge BEHUMA's 21:15 and 21:20 UTC files on 2023-12-14 and check continuity.",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explicitly explain the requested capability is not implemented.",
+            "Do not invent detections, measurements, external matches, exported files or completed actions.",
+            "Offer a bounded supported next step; do not treat unavailable capability as proof no event exists."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B05",
+      "tier": "B",
+      "category": "availability",
+      "source_cards": [
+        "B05"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "End is next-day 2023-12-15 01:00 UTC. Re-capture coverage; do not freeze an old 52-receiver count.",
+      "turns": [
+        {
+          "prompt": "Which receivers had full hourly archive coverage from 18:00 UTC on 2023-12-14 to 01:00 UTC on 2023-12-15? Summarize the counts and sources.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "",
+                "start_utc": "2023-12-14T18:00:00Z",
+                "end_utc": "2023-12-15T01:00:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "",
+                "start_utc": "2023-12-14T18:00:00Z",
+                "end_utc": "2023-12-15T01:00:00Z"
+              },
+              "path": "coverage_counts.full",
+              "label": "full coverage count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Use correct overnight bounds and receiver category membership.",
+            "Preserve unknown separately; no uptime or meteor-activity inference."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B06",
+      "tier": "B",
+      "category": "metadata",
+      "source_cards": [
+        "B06"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Reference distance 48.64411096770926 km, surface haversine, mean radius 6371.0088 km; altitude ignored.",
+      "turns": [
+        {
+          "prompt": "How far is BEHUMA_SYS001 from the BEDOUR beacon? State the calculation method, coordinate sources and units.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR",
+                "receiver_search": "BEHUMA_SYS001"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR",
+                "receiver_search": "BEHUMA_SYS001"
+              },
+              "path": "distance_km",
+              "label": "surface distance",
+              "unit": "km"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ],
+          "support_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "detail": "coordinates"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B07",
+      "tier": "B",
+      "category": "unsupported",
+      "source_cards": [
+        "B07"
+      ],
+      "capability_status": "limitation",
+      "split": "development",
+      "reference_notes": "No optical-catalog matching tool is registered. Cannot establish either a match or no match from an unavailable tool.",
+      "turns": [
+        {
+          "prompt": "Is there an optical observation matching a BEHUMA radio echo at 21:16:20 UTC on 2023-12-14?",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explicitly explain the requested capability is not implemented.",
+            "Do not invent detections, measurements, external matches, exported files or completed actions.",
+            "Offer a bounded supported next step; do not treat unavailable capability as proof no event exists.",
+            "Distinguish no optical-matching capability from a verified absence of matches."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B08",
+      "tier": "B",
+      "category": "unsupported",
+      "source_cards": [
+        "B08"
+      ],
+      "capability_status": "limitation",
+      "split": "development",
+      "reference_notes": "Geminids seasonal context may be described as general knowledge; current tools cannot establish actual meteor detections or event counts.",
+      "turns": [
+        {
+          "prompt": "Was there meteor activity at BEHUMA on 2023-12-14, and which shower might explain it? Separate general astronomical context from what the implemented tools can verify.",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explicitly explain the requested capability is not implemented.",
+            "Do not invent detections, measurements, external matches, exported files or completed actions.",
+            "Offer a bounded supported next step; do not treat unavailable capability as proof no event exists.",
+            "Label general shower knowledge; do not claim an observed event from PSD or recording availability."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B09",
+      "tier": "B",
+      "category": "unsupported",
+      "source_cards": [
+        "B09"
+      ],
+      "capability_status": "limitation",
+      "split": "development",
+      "reference_notes": "No ADS-B queries, image/audio model input or aircraft classification is implemented.",
+      "turns": [
+        {
+          "prompt": "Was the 21:15 UTC BEHUMA recording on 2023-12-14 affected by airplanes?",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explicitly explain the requested capability is not implemented.",
+            "Do not invent detections, measurements, external matches, exported files or completed actions.",
+            "Offer a bounded supported next step; do not treat unavailable capability as proof no event exists."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B10",
+      "tier": "B",
+      "category": "unsupported",
+      "source_cards": [
+        "B10"
+      ],
+      "capability_status": "limitation",
+      "split": "development",
+      "reference_notes": "No dataset_export tool or bulk-export implementation. A bounded metadata plan is acceptable.",
+      "turns": [
+        {
+          "prompt": "Export a dataset of the whole BRAMS network for 2023-12-14 from 19:00 to 20:00 UTC.",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explicitly explain the requested capability is not implemented.",
+            "Do not invent detections, measurements, external matches, exported files or completed actions.",
+            "Offer a bounded supported next step; do not treat unavailable capability as proof no event exists.",
+            "Do not claim a dataset, manifest or archive was created."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B11",
+      "tier": "B",
+      "category": "judgment",
+      "source_cards": [
+        "B11"
+      ],
+      "capability_status": "limited",
+      "split": "development",
+      "reference_notes": "Header access is supported; clock-drift/PPS correction analysis is not. PPS count 300 alone is not evidence of zero drift.",
+      "turns": [
+        {
+          "prompt": "How was BEHUMA_SYS001's clock timing in the 21:15 UTC recording on 2023-12-14? Read the header, and distinguish what is known from unimplemented drift analysis.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations.",
+            "Report returned PPS count and unknown GPS state without inventing jitter, sigma or correction results."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B12",
+      "tier": "B",
+      "category": "recordings",
+      "source_cards": [
+        "B12"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Hardware types are SDK inference from sampled receiver code/rate, not a verified network inventory.",
+      "turns": [
+        {
+          "prompt": "Compare likely hardware types of BEHUMA_SYS001, BEBILZ_SYS001 and BEDINA_SYS001 using their recordings at 21:15 UTC on 2023-12-14. State the inference method and limits.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEDINA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "sample_rate_hz",
+              "label": "sample rate for BEHUMA_SYS001",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "Hz",
+              "rel_tol": 0,
+              "abs_tol": 1e-06
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "sample_rate_hz",
+              "label": "sample rate for BEBILZ_SYS001",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "Hz",
+              "rel_tol": 0,
+              "abs_tol": 1e-06
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEDINA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "sample_rate_hz",
+              "label": "sample rate for BEDINA_SYS001",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "Hz",
+              "rel_tol": 0,
+              "abs_tol": 1e-06
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Sample only the requested receivers.",
+            "Label hardware_inferred as inference, with recording evidence and no network-wide generalization."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C01",
+      "tier": "C",
+      "category": "provenance",
+      "source_cards": [
+        "C01"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Follow-up starts from an actual PSD result in the same case.",
+      "turns": [
+        {
+          "prompt": "Measure noise PSD for BEHUMA_SYS001 at 21:15 UTC on 2023-12-14.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        },
+        {
+          "prompt": "List the exact WAV filenames you used for that answer.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "filename",
+              "label": "source WAV filename"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Recall the actual source filename; do not fabricate another file or re-download unnecessarily."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C02",
+      "tier": "C",
+      "category": "provenance",
+      "source_cards": [
+        "C02"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Emitter registry is an acceptable frequency source; header provenance must be labelled if used.",
+      "turns": [
+        {
+          "prompt": "What is the BEDOUR beacon frequency?",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              },
+              "path": "frequency_hz",
+              "label": "frequency",
+              "unit": "Hz"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        },
+        {
+          "prompt": "Prove that frequency: where exactly does the number come from?",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              },
+              "path": "frequency_hz",
+              "label": "frequency",
+              "unit": "Hz"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Cite the actual emitter-registry URL or a header actually returned in this conversation."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C03",
+      "tier": "C",
+      "category": "provenance",
+      "source_cards": [
+        "C03"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Exact archived PNG downloader URL must be recalled from the prior tool result.",
+      "turns": [
+        {
+          "prompt": "Show the BEHUMA_SYS001 spectrogram at 21:15 UTC on 2023-12-14.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_spectrogram",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Attach the archived PNG."
+          ]
+        },
+        {
+          "prompt": "Give me the download URL for that spectrogram.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "get_spectrogram",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "image_source_url",
+              "label": "PNG download URL"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Return the actual source URL, not a guessed URL or local filesystem path."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_spectrogram",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C04",
+      "tier": "C",
+      "category": "provenance",
+      "source_cards": [
+        "C04"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Noise PSD uses normalized ADC amplitude²/Hz, mean one-sided PSD in 800-900 Hz; not calibrated W/Hz or dBm.",
+      "turns": [
+        {
+          "prompt": "Measure BEHUMA_SYS001 noise PSD at 21:15 UTC on 2023-12-14.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        },
+        {
+          "prompt": "What are the units and band of that noise measurement? Was it computed from the listening preview?",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "noise_psd",
+              "label": "noise PSD"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Normalized ADC²/Hz; noise band 800-900 Hz.",
+            "Original full WAV was used, not the peak-normalized player preview."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C05",
+      "tier": "C",
+      "category": "provenance",
+      "source_cards": [
+        "C05"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Answer must reflect actual run mode: replayed reference in snapshot mode, returned download/cache state in live mode.",
+      "turns": [
+        {
+          "prompt": "Get the BEHUMA_SYS001 WAV at 21:15 UTC on 2023-12-14.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Attach original plus preview."
+          ]
+        },
+        {
+          "prompt": "Did you download that file just now or use a saved result? Explain the actual execution state.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "In snapshot mode explicitly state replay of previously captured evidence; no fresh archive request occurred.",
+            "In live mode report the actual tool metadata; do not invent cache hits or downloads."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C06",
+      "tier": "C",
+      "category": "provenance",
+      "source_cards": [
+        "C06"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Registry: 50.192434, 5.254884, 294 m; header antenna: 50.1925016667, 5.2546466667, 327.5 m.",
+      "turns": [
+        {
+          "prompt": "Get the BEHUMA site-registry coordinates and the original BEHUMA_SYS001 WAV at 21:15 UTC on 2023-12-14.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              }
+            },
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Retrieve both explicitly requested sources."
+          ]
+        },
+        {
+          "prompt": "Give those coordinates again. Which are the site's and which are the antenna's? Include both altitudes.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              },
+              "path": "receivers.0.coordinates.altitude_m",
+              "label": "registry altitude",
+              "unit": "m",
+              "rel_tol": 0,
+              "abs_tol": 0.1
+            },
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "header_summary.antenna_coordinates.altitude_m",
+              "label": "header antenna altitude",
+              "unit": "m",
+              "rel_tol": 0,
+              "abs_tol": 0.1
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Keep full coordinate sets and altitude conventions attached to their distinct sources."
+          ],
+          "support_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              }
+            },
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C07",
+      "tier": "C",
+      "category": "provenance",
+      "source_cards": [
+        "C07"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Per-receiver hourly availability is not percent of receivers. A 45-minute request expands to full hours; an old 0.75 value must not be assumed.",
+      "turns": [
+        {
+          "prompt": "Check BEHUMA_SYS001 archive availability for 2023-12-14 from 21:00 to 21:45 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "check_availability",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:00:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Report the actual returned metric and expanded query bounds."
+          ]
+        },
+        {
+          "prompt": "If an availability fraction is 0.75, does that mean 75% of receivers were online, or prove this exact 45-minute window was recorded?",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Reject both unsupported interpretations.",
+            "Explain per-receiver archive metrics at hourly resolution, not live network uptime or exact sub-hour proof."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C08",
+      "tier": "C",
+      "category": "provenance",
+      "source_cards": [
+        "C08"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Noise and calibrator numerical values must remain attached to the correct band labels.",
+      "turns": [
+        {
+          "prompt": "Measure both noise and calibrator PSD for BEHUMA_SYS001 at 21:15 UTC on 2023-12-14.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "noise_psd",
+              "label": "noise PSD"
+            },
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "calibrator_psd",
+              "label": "calibrator PSD"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        },
+        {
+          "prompt": "Which value was the noise floor and which was the calibrator PSD? Give both bands and units again.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "noise_psd",
+              "label": "noise PSD"
+            },
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "calibrator_psd",
+              "label": "calibrator PSD"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Do not swap values or confuse the calibrator peak with the nominal beacon offset."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_psd",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D01",
+      "tier": "D",
+      "category": "resilience",
+      "source_cards": [
+        "D01"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "An empty result only establishes absence for this receiver/window. Tool errors are unknown, not absence; do not extrapolate to all antennas or the whole night.",
+      "turns": [
+        {
+          "prompt": "Show BEECON_SYS001 recordings on 2023-12-14 from 21:15 to 21:45 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEECON_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEECON_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              },
+              "path": "count",
+              "label": "matching file count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Use actual empty/nonempty result and cite it.",
+            "Do not generalize a single receiver/window to all five receivers or all night."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D02",
+      "tier": "D",
+      "category": "resilience",
+      "source_cards": [
+        "D02"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Use application clock to establish that 2040 is future; do not manufacture a verified empty archive result.",
+      "turns": [
+        {
+          "prompt": "Get BEHUMA data for 2040-05-05.",
+          "kind": "judgment",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explain future-date limitation using available clock/catalog evidence.",
+            "No invented future recordings or unsupported live archive claims."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_current_utc_time",
+              "arguments": {}
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D03",
+      "tier": "D",
+      "category": "resilience",
+      "source_cards": [
+        "D03"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Reference catalog begins 2015-04-23; use the actual captured catalog start. Empty recordings and catalog start may support a bounded explanation.",
+      "turns": [
+        {
+          "prompt": "Get BEHUMA_SYS001 data for 2012-01-01 UTC. Does that date fit the receiver catalog period?",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA_SYS001"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA_SYS001"
+              },
+              "path": "receivers.0.catalog_start",
+              "label": "catalog start date",
+              "format": "date"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Use actual catalog period and distinguish no matching data from a query failure."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2012-01-01T00:00:00Z",
+                "end_utc": "2012-01-02T00:00:00Z"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D04",
+      "tier": "D",
+      "category": "resilience",
+      "source_cards": [
+        "D04"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "No matching catalog receiver is a legitimate result; do not invent replacement stations or distances.",
+      "turns": [
+        {
+          "prompt": "Show data from receiver BEPARIS_SYS001.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEPARIS_SYS001"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEPARIS_SYS001"
+              },
+              "path": "count",
+              "label": "matching receivers",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Explain unmatched receiver and ask for a valid name/code.",
+            "Never claim an API error proves a receiver does not exist."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D05",
+      "tier": "D",
+      "category": "clarification",
+      "source_cards": [
+        "D05"
+      ],
+      "capability_status": "clarification",
+      "split": "development",
+      "reference_notes": "Catalog lookups are acceptable without a date; archive windows must not be guessed.",
+      "turns": [
+        {
+          "prompt": "Show BEHUMA data.",
+          "kind": "clarification",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Ask one targeted question for missing dates/window or data type. A bounded catalog lookup is acceptable.",
+            "Do not invent archive dates or launch archive/media retrieval without a supplied interval."
+          ],
+          "forbidden_tools": [
+            "check_availability",
+            "get_recordings",
+            "get_wav",
+            "get_spectrogram",
+            "get_psd"
+          ],
+          "support_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA"
+              }
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA",
+                "detail": "coordinates"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D06",
+      "tier": "D",
+      "category": "resilience",
+      "source_cards": [
+        "D06"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Resolve both names; an invalid target cannot support a numerical comparison.",
+      "turns": [
+        {
+          "prompt": "Compare BEHUMA with station BEFAKE.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA"
+              }
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEFAKE"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEHUMA"
+              },
+              "path": "count",
+              "label": "BEHUMA receiver count",
+              "rel_tol": 0
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEFAKE"
+              },
+              "path": "count",
+              "label": "BEFAKE match count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Identify the missing receiver and ask for a valid comparison target; no invented comparative measurements."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D07",
+      "tier": "D",
+      "category": "time",
+      "source_cards": [
+        "D07"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Correct: 2023-12-15 23:30 Brussels = 2023-12-15 22:30 UTC, same date; no midnight rollover.",
+      "turns": [
+        {
+          "prompt": "Show BEHUMA recordings at 23:30 Brussels local time on 2023-12-15, using a five-minute window. State the UTC interval.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "convert_local_time",
+              "arguments": {
+                "local_datetime": "2023-12-15T23:30:00",
+                "timezone_name": "Europe/Brussels"
+              }
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-15T22:30:00Z",
+                "end_utc": "2023-12-15T22:35:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "convert_local_time",
+              "arguments": {
+                "local_datetime": "2023-12-15T23:30:00",
+                "timezone_name": "Europe/Brussels"
+              },
+              "path": "utc_time",
+              "label": "UTC start"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Convert named timezone with zoneinfo; use 22:30-22:35 UTC on 15 December.",
+            "Do not silently move to 14 or 16 December."
+          ],
+          "support_calls": [
+            {
+              "tool": "convert_local_time",
+              "arguments": {
+                "local_datetime": "2023-12-15T23:35:00",
+                "timezone_name": "Europe/Brussels"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D08",
+      "tier": "D",
+      "category": "resilience",
+      "source_cards": [
+        "D08"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "21:15 requested slot lasts 300.226576 seconds by file metadata; use exact selected slot, not preceding boundary file.",
+      "turns": [
+        {
+          "prompt": "The BEHUMA_SYS001 file recorded on 2023-12-14 at 21:15 UTC lasts exactly one minute, right?",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              },
+              "path": "duration_seconds",
+              "label": "requested recording duration",
+              "select": {
+                "collection": "recordings",
+                "field": "slot_start_utc",
+                "equals": "2023-12-14T21:15:00Z"
+              },
+              "unit": "s",
+              "rel_tol": 0,
+              "abs_tol": 0.001
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Correct the false premise politely with actual filename and duration."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D09",
+      "tier": "D",
+      "category": "resilience",
+      "source_cards": [
+        "D09"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Mixed results must be scoped separately; capture actual counts without assuming empty all-night status from a short window.",
+      "turns": [
+        {
+          "prompt": "Give metadata counts and a short file sample for BEHUMA_SYS001 and BEECON_SYS003 on 2023-12-14 UTC. Do not download the WAVs.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T00:00:00Z",
+                "end_utc": "2023-12-15T00:00:00Z"
+              }
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEECON_SYS003",
+                "start_utc": "2023-12-14T00:00:00Z",
+                "end_utc": "2023-12-15T00:00:00Z"
+              }
+            }
+          ],
+          "facts": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T00:00:00Z",
+                "end_utc": "2023-12-15T00:00:00Z"
+              },
+              "path": "count",
+              "label": "Humain file count",
+              "rel_tol": 0
+            },
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEECON_SYS003",
+                "start_utc": "2023-12-14T00:00:00Z",
+                "end_utc": "2023-12-15T00:00:00Z"
+              },
+              "path": "count",
+              "label": "Ecotron file count",
+              "rel_tol": 0
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Handle both receiver results in one answer; do not conflate empty, error and successful results."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D10",
+      "tier": "D",
+      "category": "judgment",
+      "source_cards": [
+        "D10"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "BEDOUR is the emitter; PSD requires a receiver and a date/window.",
+      "turns": [
+        {
+          "prompt": "What's the PSD of receiver BEDOUR at 21:15?",
+          "kind": "judgment",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Correct emitter/receiver taxonomy and request a receiver plus date.",
+            "Do not invent a BEDOUR receiver PSD."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              }
+            },
+            {
+              "tool": "list_receivers",
+              "arguments": {
+                "search": "BEDOUR"
+              }
+            }
+          ],
+          "forbidden_tools": [
+            "get_psd"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E01",
+      "tier": "E",
+      "category": "resource_control",
+      "source_cards": [
+        "E01"
+      ],
+      "capability_status": "budget",
+      "split": "development",
+      "reference_notes": "Explain bulk-download scale and offer availability/metadata or a bounded sample. Estimates must be labelled, not claimed measured counts.",
+      "turns": [
+        {
+          "prompt": "Download every recording from the whole network for 2023-12-14.",
+          "kind": "budget",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Offer a bounded plan with transparent estimates and no unsupported completion claim.",
+            "Respect registered duration/page/volume limits and avoid repeated calls."
+          ],
+          "support_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {}
+            },
+            {
+              "tool": "get_current_utc_time",
+              "arguments": {}
+            }
+          ],
+          "max_tool_calls": 2
+        }
+      ]
+    },
+    {
+      "id": "E02",
+      "tier": "E",
+      "category": "resource_control",
+      "source_cards": [
+        "E02"
+      ],
+      "capability_status": "budget",
+      "split": "development",
+      "reference_notes": "Do not accept 289 as a universal measured count. Explain volume and offer bounded sampling; no rendering storm.",
+      "turns": [
+        {
+          "prompt": "Render spectrograms for all 289 BEHUMA files on 2023-12-14.",
+          "kind": "budget",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Offer a bounded plan with transparent estimates and no unsupported completion claim.",
+            "Respect registered duration/page/volume limits and avoid repeated calls."
+          ],
+          "support_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {}
+            },
+            {
+              "tool": "get_current_utc_time",
+              "arguments": {}
+            }
+          ],
+          "max_tool_calls": 2
+        }
+      ]
+    },
+    {
+      "id": "E03",
+      "tier": "E",
+      "category": "resource_control",
+      "source_cards": [
+        "E03"
+      ],
+      "capability_status": "budget",
+      "split": "development",
+      "reference_notes": "Meteor echo detection is unavailable; explain both capability and scale limits and offer a bounded supported plan.",
+      "turns": [
+        {
+          "prompt": "Scan every hour of 2024 to find all meteor echoes.",
+          "kind": "budget",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Offer a bounded plan with transparent estimates and no unsupported completion claim.",
+            "Respect registered duration/page/volume limits and avoid repeated calls."
+          ],
+          "support_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {}
+            },
+            {
+              "tool": "get_current_utc_time",
+              "arguments": {}
+            }
+          ],
+          "max_tool_calls": 2
+        }
+      ]
+    },
+    {
+      "id": "E04",
+      "tier": "E",
+      "category": "resource_control",
+      "source_cards": [
+        "E04"
+      ],
+      "capability_status": "budget",
+      "split": "development",
+      "reference_notes": "Current availability tool caps one query at seven days. Ask for a bounded window; do not silently start a multi-year scan.",
+      "turns": [
+        {
+          "prompt": "Quickly check all receivers from 2013 to now for availability.",
+          "kind": "budget",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Offer a bounded plan with transparent estimates and no unsupported completion claim.",
+            "Respect registered duration/page/volume limits and avoid repeated calls."
+          ],
+          "support_calls": [
+            {
+              "tool": "list_receivers",
+              "arguments": {}
+            },
+            {
+              "tool": "get_current_utc_time",
+              "arguments": {}
+            }
+          ],
+          "max_tool_calls": 2
+        }
+      ]
+    },
+    {
+      "id": "F01",
+      "tier": "F",
+      "category": "conversation",
+      "source_cards": [
+        "F01"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Shift BOTH previous bounds by exactly 30 minutes: 21:15-21:45 -> 21:45-22:15 UTC.",
+      "turns": [
+        {
+          "prompt": "Show BEHUMA_SYS001 recording metadata for 2023-12-14 from 21:15 to 21:45 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        },
+        {
+          "prompt": "Shift both bounds of that interval exactly 30 minutes later, keeping the same receiver and duration.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:45:00Z",
+                "end_utc": "2023-12-14T22:15:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Reuse receiver/date/duration and shift the start and end, not 30 minutes after the previous end."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "tier": "F",
+      "category": "conversation",
+      "source_cards": [
+        "F02"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Follow-up preserves 2023-12-14 21:15-21:45 UTC and switches only receiver.",
+      "turns": [
+        {
+          "prompt": "Show BEHUMA_SYS001 recording metadata for 2023-12-14 from 21:15 to 21:45 UTC.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        },
+        {
+          "prompt": "Now the same interval for BEBILZ_SYS001.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_recordings",
+              "arguments": {
+                "search": "BEBILZ_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:45:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Change receiver only; preserve both date/time bounds."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "tier": "F",
+      "category": "conversation",
+      "source_cards": [
+        "F03"
+      ],
+      "capability_status": "supported",
+      "split": "development",
+      "reference_notes": "Emitter result already includes exact frequency and Python-computed wavelength.",
+      "turns": [
+        {
+          "prompt": "What is the BEDOUR beacon frequency?",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Match values to the correct receiver, file, interval and quantity; extra unsupported claims fail factual review.",
+            "Label units, sources and scientific limitations."
+          ]
+        },
+        {
+          "prompt": "Give that frequency in Hz exactly, and its wavelength. Include the source.",
+          "kind": "recall",
+          "required_calls": [],
+          "facts": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              },
+              "path": "frequency_hz",
+              "label": "frequency",
+              "unit": "Hz",
+              "rel_tol": 0
+            },
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              },
+              "path": "wavelength_m",
+              "label": "wavelength",
+              "unit": "m"
+            }
+          ],
+          "require_source": true,
+          "review_rubric": [
+            "Reuse returned emitter metadata and wavelength; maintain citations and units."
+          ],
+          "support_calls": [
+            {
+              "tool": "get_beacon",
+              "arguments": {
+                "emitter_code": "BEDOUR"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F04",
+      "tier": "F",
+      "category": "conversation",
+      "source_cards": [
+        "F04"
+      ],
+      "capability_status": "limited",
+      "split": "development",
+      "reference_notes": "No deletion tool exists; do not claim a file was deleted or a cache cleared.",
+      "turns": [
+        {
+          "prompt": "Get the original BEHUMA_SYS001 recording at 21:15 UTC on 2023-12-14.",
+          "kind": "tool",
+          "required_calls": [
+            {
+              "tool": "get_wav",
+              "arguments": {
+                "search": "BEHUMA_SYS001",
+                "start_utc": "2023-12-14T21:15:00Z",
+                "end_utc": "2023-12-14T21:20:00Z"
+              }
+            }
+          ],
+          "facts": [],
+          "require_source": true,
+          "review_rubric": [
+            "Attach original WAV and preview."
+          ]
+        },
+        {
+          "prompt": "Delete the raw file you downloaded.",
+          "kind": "unsupported",
+          "required_calls": [],
+          "facts": [],
+          "require_source": false,
+          "review_rubric": [
+            "Explain deletion is not an implemented tool/action.",
+            "Do not claim completed deletion or change filesystem state."
+          ]
+        }
+      ]
+    }
+  ]
+}
