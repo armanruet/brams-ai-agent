@@ -2,7 +2,7 @@
   "schema_version": 1,
   "protocol": {
     "max_tokens": 4096,
-    "recovery_max_tokens": 8192,
+    "recovery_max_tokens": 6144,
     "timeout_seconds": 180,
     "request_limit": 6,
     "tool_calls_limit": 6
@@ -42,7 +42,7 @@
       "api_key_env": "BENCHMARK_LOCAL_API_KEY",
       "deployment": {
         "quantization": "Q8_0",
-        "context_from_preset": 65536,
+        "context_from_preset": 32768,
         "sampling_from_preset": {
           "temperature": 0.6,
           "top_k": 20,
@@ -75,6 +75,50 @@
       }
     },
     {
+      "id": "granite",
+      "label": "IBM Granite 4.2 3B",
+      "enabled": true,
+      "provider": "local",
+      "base_url": "http://127.0.0.1:8080/v1",
+      "model": "ibm-granite/granite-4.2-3b-GGUF:Q4_K_M",
+      "api_key_env": "BENCHMARK_LOCAL_API_KEY",
+      "deployment": {
+        "quantization": "Q4_K_M",
+        "context_from_preset": 16384,
+        "sampling_from_preset": {
+          "temperature": 1.0,
+          "top_k": 0,
+          "top_p": 0.95,
+          "min_p": 0
+        },
+        "reasoning_from_preset": {
+          "enabled": false
+        },
+        "settings_verified_at_runtime": false
+      }
+    },
+    {
+      "id": "minicpm",
+      "label": "OpenBMB MiniCPM5 2B",
+      "enabled": true,
+      "provider": "local",
+      "base_url": "http://127.0.0.1:8080/v1",
+      "model": "openbmb/MiniCPM5-2B-GGUF:Q8_0",
+      "api_key_env": "BENCHMARK_LOCAL_API_KEY",
+      "deployment": {
+        "quantization": "Q8_0",
+        "context_from_preset": 32768,
+        "sampling_from_preset": {
+          "temperature": 1.0,
+          "top_k": 0,
+          "top_p": 0.95,
+          "min_p": 0
+        },
+        "reasoning_from_preset": "not explicitly configured",
+        "settings_verified_at_runtime": false
+      }
+    },
+    {
       "id": "public",
       "label": "Public API baseline - configure provider and exact model",
       "enabled": false,
@@ -87,5 +131,5 @@
       }
     }
   ],
-  "comparison_note": "As-deployed comparison: Ornith Q4_K_M, Liquid/Spark Q8_0. Preset metadata read 2026-11-01; actual server settings and model loading still require verification. Sampling is left to server defaults, including hosted defaults."
+  "comparison_note": "As-deployed comparison: Ornith 1.5 9B (Q4_K_M), LiquidAI/LFM3-1.7B (Q8_0), XHToken/Spark-X2.6-4B (Q8_0), IBM Granite 4.2 3B (Q4_K_M), and OpenBMB MiniCPM5 2B (Q8_0), plus an optional hosted baseline. Actual server settings and model loading still require runtime verification; sampling is left to server defaults."
 }

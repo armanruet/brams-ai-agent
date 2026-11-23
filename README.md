@@ -58,8 +58,11 @@ keys are scoped to a browser session, and applying a connection starts a fresh c
 
 ## Model benchmarking
 
-[BENCHMARKING.md](BENCHMARKING.md) provides the execution plan for Ornith 1.5 9B,
-LiquidAI/LFM3-1.7B, XHToken/Spark-X2.6-4B and a configurable hosted model. The CLI
+[BENCHMARKING.md](BENCHMARKING.md) provides the execution plan for the five
+tested local `llama.cpp` models (`ornith-ai/Ornith-1.5-9B-GGUF:Q4_K_M`,
+`LiquidAI/LFM3-1.7B-GGUF:Q8_0`, `XHToken/Spark-X2.6-4B-GGUF:Q8_0`,
+`ibm-granite/granite-4.2-3b-GGUF:Q4_K_M`, and `openbmb/MiniCPM5-2B-GGUF:Q8_0`)
+plus a configurable hosted baseline (`benchmarks/models.example.json`). The CLI
 now uses the corrected 54-task / 66-turn [question bank](QUESTIONS.md), eight
 separate holdout variants, real-tool capture and structured-call preflight.
 Reports separate grounded-answer review, tool decisions, judgment, context,
@@ -116,7 +119,7 @@ brams-ai-agent/
 │   ├── tool_validation.py           # Semantic checks shared by live and replay tools
 │   └── tool_checker.py              # Selected TOOL_CHECKER questions and live reports
 ├── benchmarks/
-│   ├── models.example.json          # Three local deployments and optional hosted slot
+│   ├── models.example.json          # Five local deployments and optional hosted slot
 │   ├── cases.json                   # Preserved v1: 20 tasks / 23 turns
 │   ├── current_capabilities_v2.json # Current capabilities: 8 cases / 9 turns (incl. detection & geo)
 │   ├── current_capabilities_v3.json # Extended v3: 10 cases / 11 turns (adds WAV & DST conversion)
@@ -265,8 +268,19 @@ The app defaults are:
 | Gradio address | `http://127.0.0.1:7860` |
 
 The router selects a model using the `model` field in each request. If your
-server advertises a different ID, copy the exact ID from `/v1/models` into `.env`.
-Catalog discovery and actual generation are separate checks.
+server advertises a different ID, copy the exact ID from `/v1/models` into `.env`
+or choose it via **Model settings → Refresh local models**. Catalog discovery
+and actual generation are separate checks.
+
+### Tested local models (`config/models.example.ini`)
+
+| Model ID | Quantization | Preset `ctx-size` | Notes |
+| --- | --- | ---: | --- |
+| `ornith-ai/Ornith-1.5-9B-GGUF:Q4_K_M` | Q4_K_M | 16,384 | Default local model (`reasoning-budget = 128`, `load-on-startup = 1`) |
+| `LiquidAI/LFM3-1.7B-GGUF:Q8_0` | Q8_0 | 32,768 | Lightweight fast local model |
+| `XHToken/Spark-X2.6-4B-GGUF:Q8_0` | Q8_0 | 65,536 | Compact mid-size model with long context |
+| `ibm-granite/granite-4.2-3b-GGUF:Q4_K_M` | Q4_K_M | 16,384 | Thinking disabled via `chat-template-kwargs` |
+| `openbmb/MiniCPM5-2B-GGUF:Q8_0` | Q8_0 | 32,768 | Compact 2B local model |
 
 ## 2. Install in a separate terminal
 

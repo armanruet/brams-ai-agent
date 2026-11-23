@@ -91,7 +91,7 @@ class BenchmarkDataTests(unittest.TestCase):
         self.assertEqual(len(cases), 54)
         self.assertEqual(sum(len(case["turns"]) for case in cases), 66)
         self.assertEqual(len(benchmark.selected_cases(benchmark.LEGACY_CASES)), 20)
-        self.assertEqual(len(benchmark.selected_models(benchmark.configuration(benchmark.DEFAULT_CONFIG))), 3)
+        self.assertEqual(len(benchmark.selected_models(benchmark.configuration(benchmark.DEFAULT_CONFIG))), 5)
 
     def test_invalid_key_reference_explains_env_setup_without_echoing_value(self):
         with tempfile.TemporaryDirectory() as temp:
